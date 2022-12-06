@@ -1,0 +1,2 @@
+{:paths ["src" "resources"]
+ :deps {hashp/hashp {:mvn/version "0.2.2"}}}

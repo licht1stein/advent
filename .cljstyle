@@ -1,0 +1,3 @@
+{:rules {:indentation {:list-indent 1}
+         :blank-lines {:padding-lines 1
+                       :insert-padding? false}}}
