@@ -31,12 +31,10 @@
     (if-let [parsed (parse-command (first lines))]
       (case (:command  parsed)
         :top (recur (rest lines) ["/"]  sizes)
-        :ls (recur (rest lines) current-path sizes)
         :up (recur (rest lines) (-> current-path drop-last vec)  sizes)
         :cd (recur (rest lines) (conj current-path (:target parsed)) sizes)
-        :dir
-        (recur (rest lines) current-path sizes)
-        :file (recur (rest lines) current-path (update-sizes sizes current-path (:size parsed))))
+        :file (recur (rest lines) current-path (update-sizes sizes current-path (:size parsed)))
+        (recur (rest lines) current-path sizes))
       sizes)))
 
 (defn solve-part-1 [s]
