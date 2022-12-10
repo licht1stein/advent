@@ -3,61 +3,10 @@
             [clojure.java.io :as io]
             [clojure.string :as str]))
 
-(def initial-state
-  {:head {:row 0
-          :col 0}
-   :tail {:row 0
-          :col 0}})
-
 (defn make-state [length]
   (into (sorted-map) (apply merge (for [i (range (inc length))]
                                     {i {:row 0
                                         :col 0}}))))
-(defn states->str [state]
-  (let [rsize (apply max 6 (map #(-> (state %) :row) (keys state)))
-        csize (apply max 6 (map #(-> (state %) :col) (keys state)))]
-    (->>
-     (for [row (range rsize)]
-       (for [col (range csize)]
-         (let [matches (filter #(= (last %) {:row row :col col}) state)]
-           matches))))))
-
-#_(defn state->str [{:keys [head tail]}]
-    (let [rsize (apply max (map :row [head tail]))
-          csize (apply max (map :col [head tail]))
-          grid-size [(inc (max rsize 5)) (inc (max csize 5))]]
-      (->>
-       (for [row (range (first grid-size))]
-         (for [col (range (last grid-size))]
-           (cond (= {:row row :col col} head) "H"
-                 (= {:row row :col col} tail) "T"
-                 (and (= 0 row) (= 0 col)) "s"
-                 :else ".")))
-       reverse
-       (map #(str/join " " %))
-       (str/join "\n"))))
-
-#_(defn print-state [state]
-  (let [strstate (state->str state)
-        width (-> strstate str/split-lines first str/trim count)]
-    (println (str/join (repeat width "=")))
-    (println strstate)))
-
-#_(defn print-states [states & header]
-  (let [sstates (map #(->> % state->str str/split-lines) states)
-        sep "   "
-        width (reduce + (* (count states) (count sep)) (map #(-> % first count) sstates))
-        header (if-not (first header) (str/join (repeat width "="))
-                       (let [half-w (int (/ (- width (count header)) (count states)))
-                             pad (str/join (repeat half-w "="))]
-                         (str pad " " header " " pad)))]
-
-    (println "\n" header)
-    (->> (apply interleave sstates)
-         (partition (count states))
-         (map #(str/join "    " %))
-         (str/join "\n")
-         println)))
 
 (defn move [state {:keys [row col part] :or {row 0 col 0}}]
   (-> state
