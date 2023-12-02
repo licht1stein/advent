@@ -1,18 +1,18 @@
 (ns advent-2023.day01
   (:require
    [clojure.java.io :as io]
-   [clojure.math]
-   [clojure.string :as str]
-   [hashp.core]))
+   [clojure.string :as str]))
 
 (def numbers {"one" 1 "two" 2 "three" 3 "four" 4 "five" 5 "six" 6 "seven" 7 "eight" 8 "nine" 9})
 
 (defn parse-value
   [s]
-  (or (parse-long s)
-      (numbers s)))
+  (str (or (parse-long s)
+           (numbers s))))
 
-(defn* parse-line
+;; There was an alternative solution with recursively removing firt char, see
+;; https://github.com/licht1stein/advent/commit/2d3b4b59f15bc188aba162173730c3dd184ba74e
+(defn parse-line
   [s regex]
   (let [pattern-first (re-pattern (format "^.*?(%s)" regex))
         pattern-last (re-pattern (format ".*(%s).*?$" regex))
@@ -20,7 +20,6 @@
         l (last (re-find pattern-last s))]
     (->> [f l]
          (map parse-value)
-         (map str)
          (reduce str)
          parse-long)))
 
@@ -50,7 +49,6 @@ xtwone3four
 4nineeightseven2
 zoneight234
 7pqrstsixteen")
-
 
 (comment
   (solve sample re-1)  ;; => 142
