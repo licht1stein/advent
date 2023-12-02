@@ -12,25 +12,23 @@
   (or (parse-long s)
       (numbers s)))
 
-(defn coll->int
-  [coll]
-  (->> [(-> coll first parse-value) (-> coll last parse-value)]
-       (apply str)
-       parse-long))
-
-(defn parse-line
-  ([regex s]
-   (parse-line regex s []))
-  ([regex s acc]
-   (if (empty? s)
-     (->> acc (remove nil?) coll->int)
-     (recur regex (str/join (rest s)) (conj acc (re-find regex s))))))
+(defn* parse-line
+  [s regex]
+  (let [pattern-first (re-pattern (format "^.*?(%s)" regex))
+        pattern-last (re-pattern (format ".*(%s).*?$" regex))
+        f (last (re-find pattern-first s))
+        l (last (re-find pattern-last s))]
+    (->> [f l]
+         (map parse-value)
+         (map str)
+         (reduce str)
+         parse-long)))
 
 (defn solve
   [input regex]
   (->> input
        str/split-lines
-       (map #(parse-line regex %))
+       (map #(parse-line % regex))
        (reduce +)))
 
 (def re-1 #"\d")
