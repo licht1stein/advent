@@ -1,3 +1,4 @@
 {:paths ["src" "resources"]
  :deps {hashp/hashp {:mvn/version "0.2.2"}
+        org.clojars.abhinav/snitch {:mvn/version "0.1.14"}
         zprint/zprint {:mvn/version "1.2.4"}}}
