@@ -7,47 +7,30 @@
 
 (def numbers {"one" 1 "two" 2 "three" 3 "four" 4 "five" 5 "six" 6 "seven" 7 "eight" 8 "nine" 9})
 
-(defn pair?
-  [s1 s2]
-  (when (str/ends-with? s1 (-> s2 first str))
-    [(str (str/join (butlast s1)) s2) (str s1 s2)]))
-
-(def replacements
-  (->>
-   (for [one (keys numbers)]
-     (for [two (keys numbers)]
-       (or (pair? one two) (pair? two one))))
-   flatten
-   (remove nil?)
-   (partition 2)))
-
-(defn replace-pair
-  [s [wrong right]]
-  (str/replace s wrong right))
-
-(defn sanitize
-  ([s]
-   (sanitize-input s replacements))
-  ([s pairs]
-   (if (empty? pairs)
-     s
-     (recur (replace-pair s (first pairs)) (rest pairs)))))
-
 (defn parse-value
   [s]
   (or (parse-long s)
       (numbers s)))
 
+(defn coll->int
+  [coll]
+  (->> [(-> coll first parse-value) (-> coll last parse-value)]
+       (apply str)
+       parse-long))
+
+(defn parse-line
+  ([regex s]
+   (parse-line regex s []))
+  ([regex s acc]
+   (if (empty? s)
+     (->> acc (remove nil?) coll->int)
+     (recur regex (str/join (rest s)) (conj acc (re-find regex s))))))
+
 (defn solve
   [input regex]
   (->> input
-       sanitize
        str/split-lines
-       (map #(re-seq regex %))
-       (map #(list (first %) (last %)))
-       (map #(map parse-value %))
-       (map #(reduce str %))
-       (map parse-long)
+       (map #(parse-line regex %))
        (reduce +)))
 
 (def re-1 #"\d")
@@ -57,7 +40,7 @@
 
 (def sample
   "1abc2
-pqr3stu8vwx
+Pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet")
 
@@ -69,6 +52,7 @@ xtwone3four
 4nineeightseven2
 zoneight234
 7pqrstsixteen")
+
 
 (comment
   (solve sample re-1)  ;; => 142
