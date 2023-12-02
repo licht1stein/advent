@@ -10,13 +10,12 @@
   (str (or (parse-long s)
            (numbers s))))
 
-;; There was an alternative solution with recursively removing firt char, see
+;; There was an alternative solution with recursively removing first char, see
 ;; https://github.com/licht1stein/advent/commit/2d3b4b59f15bc188aba162173730c3dd184ba74e
 (defn parse-line
   [s regex]
-  (let [pattern-first (re-pattern (format "^.*?(%s)" regex))
-        pattern-last (re-pattern (format ".*(%s).*?$" regex))
-        f (last (re-find pattern-first s))
+  (let [pattern-last (re-pattern (format ".*(%s).*?$" regex))
+        f (re-find regex s)
         l (last (re-find pattern-last s))]
     (->> [f l]
          (map parse-value)
