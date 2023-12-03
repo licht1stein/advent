@@ -12,11 +12,12 @@
 
 ;; There was an alternative solution with recursively removing first char, see
 ;; https://github.com/licht1stein/advent/commit/2d3b4b59f15bc188aba162173730c3dd184ba74e
+
+
 (defn parse-line
   [s regex]
-  (let [pattern-last (re-pattern (format ".*(%s).*?$" regex))
-        f (re-find regex s)
-        l (last (re-find pattern-last s))]
+  (let [f (re-find regex s)
+        l (last (re-find (re-pattern (format ".*(%s).*?$" regex)) s))]
     (->> [f l]
          (map parse-value)
          (reduce str)
