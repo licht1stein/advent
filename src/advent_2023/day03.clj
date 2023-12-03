@@ -65,7 +65,7 @@
          flatten
          vec)))
 
-(defn cell->num
+(defn cells->num
   [cells]
   (->> cells
        (map :char)
