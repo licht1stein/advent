@@ -90,14 +90,14 @@
 
 (defexpect collect-number
   (testing "Collect a number from a cell of one of it's digits"
-    (expect [{:col 5, :row 9, :char \5, :digit? true}
-             {:col 6, :row 9, :char \9, :digit? true}
-             {:col 7, :row 9, :char \8, :digit? true}]
-            (sut/collect-number {:col 6 :row 9} (sut/parse-input sample)))
     (expect [{:col 0, :row 0, :char \4, :digit? true}
              {:col 1, :row 0, :char \6, :digit? true}
              {:col 2, :row 0, :char \7, :digit? true}]
-            (sut/collect-number {:col 0 :row 0} (sut/parse-input sample)))))
+            (sut/collect-number {:col 0 :row 0} (sut/parse-input sample)))
+    (expect [{:col 5, :row 9, :char \5, :digit? true}
+             {:col 6, :row 9, :char \9, :digit? true}
+             {:col 7, :row 9, :char \8, :digit? true}]
+            (sut/collect-number {:col 6 :row 9} (sut/parse-input sample)))))
 
 (defexpect collect-adjacent-numbers
   (testing "Collect all adjacent numbers from parsed"

@@ -5,7 +5,7 @@
 
 (defn eng-symbol?
   [char]
-  (boolean (not (re-matches #"[\d\.]" (str char)))))
+  (not (re-matches #"[\d\.]" (str char))))
 
 (defn digit?
   [char]
@@ -46,26 +46,22 @@
    (fn [input]
      (vec
       (flatten
-       (for [[i row] (map-indexed vector (str/split-lines input))
-             :when (seq row)]
+       (for [[i row] (map-indexed vector (str/split-lines input))]
          (parse-row row i)))))))
 
 (defn find-cell
   [{:keys [row col]} cells]
   (->> cells
-       (filter #(= row (:row %)))
-       (filter #(= col (:col %)))
+       (filter #(and (= row (:row %)) (= col (:col %))))
        first))
 
 (defn collect-number
-  [{:keys [row col] :as c} parsed]
+  [{:keys [row col] :as cell} parsed]
   (let [row (->> parsed (filter #(= row (:row %))))
-        cell (find-cell c parsed)
-        right-side (filter #(> (:col %) col) row)
-        left-side (reverse (filter #(< (:col %) col) row))
-        right (take-while :digit? right-side)
-        left (reverse (take-while :digit? left-side))]
-    (->> [left cell right]
+        this-cell (find-cell cell parsed)
+        right (->> row (filter #(> (:col %) col)) (take-while :digit?))
+        left (->> row (filter #(< (:col %) col)) reverse (take-while :digit?) reverse)]
+    (->> [left this-cell right]
          flatten
          vec)))
 
