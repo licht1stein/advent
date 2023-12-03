@@ -65,7 +65,7 @@
          flatten
          vec)))
 
-(defn coll->number
+(defn cell->num
   [cells]
   (->> cells
        (map :char)
@@ -80,7 +80,7 @@
        (filter :digit?)
        (map #(collect-number % parsed))
        set
-       (mapv coll->number)))
+       (mapv cell->num)))
 
 (defn adjacent-to
   [key input]
