@@ -7,8 +7,10 @@
 
 (defn parse-card
   [s]
-  (let [sections (str/split s #"[\:\|]")
-        [card win have] (->> sections (map #(re-seq #"\d+" %)) (map #(map parse-long %)) (map set))
+  (let [[card win have] (->> (str/split s #"[\:\|]")
+                             (map #(re-seq #"\d+" %))
+                             (map #(map parse-long %))
+                             (map set))
         intersection (set/intersection win have)
         points (int (math/pow 2 (dec (count intersection))))
         won-ids (range (inc (first card)) (+ (first card) (inc (count intersection))))]
@@ -42,13 +44,12 @@
    (if (empty? cards)
      (count stack)
      (let [card (first cards)
-           this-set (take-while #(= (:id %) (:id card)))
-           cards-this-rm (drop-while #(= (:id %) (:id card)))
-           won-cards-1 (get-won-cards card parsed)
-           won-cards (flatten (repeat (count this-set) won-cards-1))
-           new-cards (->> cards-this-rm (concat won-cards) (sort-by :id))]
-       (println "Cards:" (count cards) "Stack:" (count stack) (:id card))
-       (recur parsed new-cards (concat stack this-set))))))
+           take-cards (take-while #(= (:id %) (:id card)) cards)
+           rest-cards (drop-while #(= (:id %) (:id card)) cards)
+           won-cards (flatten (repeat (count take-cards) (get-won-cards card parsed)))
+           new-cards (sort-by :id (concat won-cards rest-cards))]
+       (println "Processing ID:" (:id card))
+       (recur parsed new-cards (concat stack take-cards))))))
 
 (def sample
   "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
